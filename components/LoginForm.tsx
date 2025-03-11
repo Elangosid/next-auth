@@ -1,6 +1,7 @@
 'use client';
 
 import { signIn } from 'next-auth/react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -58,6 +59,9 @@ export default function LoginPage() {
                     </button>
                     <div className="text-center text-sm text-gray-500">
                         <a href="#" className="text-blue-500 hover:underline">Forgot password?</a>
+                    </div>
+                    <div className='text-center text-sm text-gray-500'>
+                        Don't have account   <Link href="/register" className='text-blue-500'>SignUp</Link>
                     </div>
                 </div>
             </div>

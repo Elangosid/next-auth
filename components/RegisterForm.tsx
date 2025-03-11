@@ -18,43 +18,39 @@ const Register = () => {
         e.preventDefault();
 
         try {
-            const res = await fetch('/api/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    name: formData.name,
-                    email: formData.email,
-                    password: formData.password,
-                }),
+            const resUserExists = await fetch("/api/checkmail", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email: formData.email }),
             });
 
-            if (res.ok) {
+            const { exists, message } = await resUserExists.json();
 
-                alert('Registration successful');
-                setFormData({ name: '', email: '', password: '' });
-                router.push('/')
-            } else {
-                alert('Registration failed');
+            if (exists) {
+                alert(message || "User already exists");
+                return;
             }
-            // const resUserExists = await fetch('/api/register', {
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/json',
-            //     },
-            //     body: JSON.stringify({ email: formData.email }),
-            // });
 
-            // const { user } = await resUserExists.json();
-            // if (user) {
-            //     alert('User already exists');
-            //     return;
-            // }
-        } catch (error) {
-            console.log("error during register", error)
+            const res = await fetch("/api/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(formData),
+            });
+
+            if (!res.ok) {
+                const data = await res.json();
+                throw new Error(data.message || "Registration failed");
+            }
+
+            alert("Registration successful");
+            setFormData({ name: "", email: "", password: "" });
+            router.push("/");
+        } catch (error: any) {
+            console.error("Error during register:", error.message);
+            alert(error.message || "An error occurred during registration");
         }
     };
+
 
     return (
         <div className="flex justify-center items-center min-h-screen bg-gray-100">
